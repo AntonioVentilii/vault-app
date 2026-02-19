@@ -15,6 +15,39 @@ import { filesStore, loadingFiles } from '$lib/stores/files.store';
 import type { Identity } from '@icp-sdk/core/agent';
 import type { Principal } from '@icp-sdk/core/principal';
 
+const runWithConcurrencyLimit = async <T>(
+	tasks: Array<() => Promise<T>>,
+	limit: number
+): Promise<T[]> => {
+	if (limit < 1) {
+		throw new Error('Concurrency limit must be at least 1');
+	}
+
+	const results: T[] = new Array(tasks.length);
+
+	let nextIndex = 0;
+
+	const worker = async (): Promise<void> => {
+		while (true) {
+			const i = nextIndex;
+
+			nextIndex += 1;
+
+			if (i >= tasks.length) {
+				return;
+			}
+
+			results[i] = await tasks[i]();
+		}
+	};
+
+	const workerCount = Math.min(limit, tasks.length);
+
+	await Promise.all(Array.from({ length: workerCount }, () => worker()));
+
+	return results;
+};
+
 /**
  * Uploads a file to Vault Core following the 3-phase protocol.
  */
@@ -50,24 +83,21 @@ export const uploadFile = async ({
 
 	const chunkCount = session.expected_chunk_count;
 
-	// Normally we want to do this in batches. For simplicity, we loop.
-	// In a real app, use Promise.all with concurrency limit.
-	for (let i = 0; i < chunkCount; i++) {
+	const CONCURRENCY = 6;
+
+	const chunkTasks = Array.from({ length: chunkCount }, (_, i) => async () => {
 		const start = i * CHUNK_SIZE;
 		const end = Math.min(start + CHUNK_SIZE, file.size);
 		const blob = file.slice(start, end);
 		const arrayBuffer = await blob.arrayBuffer();
 		const data = new Uint8Array(arrayBuffer);
 
-		// Get upload token for this chunk
-		const tokenResult = await getUploadTokens({
+		const [token] = await getUploadTokens({
 			identity,
 			uploadId: session.upload_id,
 			chunkIndexes: [i]
 		});
-		const [token] = tokenResult;
 
-		// Approve and put chunk to bucket
 		await approveIcrc2({
 			identity,
 			ledgerType,
@@ -86,7 +116,9 @@ export const uploadFile = async ({
 		if (onProgress) {
 			onProgress((i + 1) / chunkCount);
 		}
-	}
+	});
+
+	await runWithConcurrencyLimit(chunkTasks, CONCURRENCY);
 
 	const commit = await commitUpload({ identity, uploadId: session.upload_id });
 
