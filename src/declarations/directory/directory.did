@@ -1,3 +1,5 @@
+// Generated from AntonioVentilii/vault-core commit 12a87ea1883f08a101505aa5fc2da58926500994 for file 'src/directory/directory.did'
+
 type AbortUploadResult = variant { Ok; Err : DirectoryError };
 type Account = record { owner : principal; subaccount : opt blob };
 type Args = variant { Upgrade : opt UpgradeArgs; Init : InitArgs };

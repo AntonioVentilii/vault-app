@@ -1,3 +1,5 @@
+// Generated from AntonioVentilii/vault-core commit 12a87ea1883f08a101505aa5fc2da58926500994 for file 'src/bucket/bucket.did'
+
 type Account = record { owner : principal; subaccount : opt blob };
 type AdminSetReadOnlyResult = variant { Ok; Err : BucketError };
 type AdminWithdrawResult = variant { Ok; Err : BucketError };
