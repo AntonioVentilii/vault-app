@@ -1,1 +1,1 @@
-export const DIRECTORY_CANISTER_ID = 'rrkah-fqaaa-aaaaa-aaaaq-cai';
+export const DIRECTORY_CANISTER_ID = 'vkgwx-paaaa-aaaak-qw5ya-cai';
