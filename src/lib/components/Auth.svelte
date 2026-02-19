@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { onDestroy, onMount, type Snippet } from 'svelte';
 	import { onAuthStateChange } from '@junobuild/core';
-	import { userStore } from '$lib/stores/user.store';
-	import { userSignedIn } from '$lib/derived/user.derived';
-	import Logout from '$lib/components/Logout.svelte';
+	import { onDestroy, onMount, type Snippet } from 'svelte';
 	import Login from '$lib/components/Login.svelte';
+	import Logout from '$lib/components/Logout.svelte';
+	import { userSignedIn } from '$lib/derived/user.derived';
+	import { userStore } from '$lib/stores/user.store';
 
 	interface Props {
 		children: Snippet;
@@ -16,6 +16,7 @@
 
 	onMount(() => (unsubscribe = onAuthStateChange((user) => userStore.set(user))));
 
+	// eslint-disable-next-line no-console
 	const automaticSignOut = () => console.log('Automatically signed out because session expired');
 
 	onDestroy(() => unsubscribe?.());
@@ -24,13 +25,14 @@
 <svelte:window onjunoSignOutAuthTimer={automaticSignOut} />
 
 {#if $userSignedIn}
-	<div>
+	<div class="space-y-4">
+		<div class="flex justify-end p-4">
+			<Logout />
+		</div>
 		{@render children()}
-
-		<Logout />
 	</div>
 {:else}
-	<div class="gap flex flex-col">
+	<div class="flex min-h-[50dvh] items-center justify-center p-8">
 		<Login />
 	</div>
 {/if}
