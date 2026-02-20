@@ -78,13 +78,12 @@
 <div class="space-y-6">
 	<div class="flex items-center justify-between">
 		<h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Your Files</h2>
-		<Button onclick={handleRefresh}>
+		<Button busy={$loadingFiles} disabled={$loadingFiles} onclick={handleRefresh}>
 			{#if $loadingFiles}
-				<div
-					class="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600"
-				></div>
+				Refreshing...
+			{:else}
+				Refresh
 			{/if}
-			Refresh
 		</Button>
 	</div>
 

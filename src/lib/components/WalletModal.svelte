@@ -159,17 +159,28 @@
 						<div class="flex items-center gap-2 text-sm text-gray-500">
 							<span class="font-bold text-gray-900 dark:text-white">ICP</span>
 						</div>
-						<div class="mt-1 text-lg font-bold text-gray-900 dark:text-white">
+
+						<div
+							class="mt-1 text-lg font-bold text-gray-900 dark:text-white"
+							class:animate-pulse={loading}
+							class:text-gray-400={loading}
+						>
 							{formatBalance({ amount: icpBalance, decimals: 8 })}
 						</div>
 					</div>
+
 					<div
 						class="rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-gray-800 dark:bg-gray-800/30"
 					>
 						<div class="flex items-center gap-2 text-sm text-gray-500">
 							<span class="font-bold text-blue-600">ckUSDC</span>
 						</div>
-						<div class="mt-1 text-lg font-bold text-gray-900 dark:text-white">
+
+						<div
+							class="mt-1 text-lg font-bold text-gray-900 dark:text-white"
+							class:animate-pulse={loading}
+							class:text-gray-400={loading}
+						>
 							{formatBalance({ amount: ckUsdcBalance, decimals: 6 })}
 						</div>
 					</div>
@@ -184,13 +195,12 @@
 				{/if}
 
 				<div class="flex gap-3">
-					<Button disabled={loading} onclick={fetchBalances}>
+					<Button busy={loading} disabled={loading} onclick={fetchBalances}>
 						{#if loading}
-							<div
-								class="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white"
-							></div>
+							Refreshing Balances...
+						{:else}
+							Refresh Balances
 						{/if}
-						Refresh Balances
 					</Button>
 				</div>
 			</div>
