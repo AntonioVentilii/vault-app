@@ -98,21 +98,23 @@ export const uploadFile = async ({
 	});
 
 	// Group tokens by bucket to perform a single approval per bucket
-	const bucketMap = new Map<string, { bucketId: Principal; amount: bigint }>();
+	const bucketMap = new Map<string, { bucketId: Principal; amount: bigint; count: number }>();
 	const pricePerChunk = getPrice({ action: 'PUT_CHUNK', ledgerType });
 
 	for (const token of tokens) {
 		const bid = token.bucket_id.toText();
-		const current = bucketMap.get(bid) ?? { bucketId: token.bucket_id, amount: ZERO };
+		const numChunks = token.allowed_chunks.length;
+		const current = bucketMap.get(bid) ?? { bucketId: token.bucket_id, amount: ZERO, count: 0 };
 		bucketMap.set(bid, {
 			...current,
-			amount: current.amount + pricePerChunk
+			amount: current.amount + pricePerChunk * BigInt(numChunks),
+			count: current.count + numChunks
 		});
 	}
 
 	// Single approval per bucket
 	let bucketIndex = 0;
-	for (const { bucketId, amount } of bucketMap.values()) {
+	for (const { bucketId, amount, count } of bucketMap.values()) {
 		bucketIndex++;
 		onProgress?.({
 			progress: 0.1 + (bucketIndex / bucketMap.size) * 0.1,
@@ -122,30 +124,36 @@ export const uploadFile = async ({
 			identity,
 			ledgerType,
 			spender: bucketId,
-			amount
+			amount,
+			expectedTransfersCount: count
 		});
 	}
 
 	// 3. Phase 2: Concurrent Chunking
 	const CONCURRENCY = 6;
-	const chunkTasks = tokens.map((token, i) => async () => {
+	const chunkTasks = allChunkIndexes.map((chunkIndex) => async () => {
 		if (onProgress) {
 			onProgress({
-				progress: 0.2 + (i / chunkCount) * 0.75,
-				detail: `Preparing chunk ${i + 1}/${chunkCount}...`
+				progress: 0.2 + (chunkIndex / chunkCount) * 0.75,
+				detail: `Preparing chunk ${chunkIndex + 1}/${chunkCount}...`
 			});
 		}
 
-		const start = i * CHUNK_SIZE;
+		const start = chunkIndex * CHUNK_SIZE;
 		const end = Math.min(start + CHUNK_SIZE, file.size);
 		const blob = file.slice(start, end);
 		const arrayBuffer = await blob.arrayBuffer();
 		const data = new Uint8Array(arrayBuffer);
 
+		const token = tokens.find((t) => t.allowed_chunks.includes(chunkIndex));
+		if (!token) {
+			throw new Error(`No token found for chunk index ${chunkIndex}`);
+		}
+
 		await putChunk({
 			identity,
 			token,
-			chunkIndex: i,
+			chunkIndex,
 			content: Array.from(data),
 			paymentType
 		});
@@ -155,8 +163,8 @@ export const uploadFile = async ({
 			const snippet = decoder.decode(data.slice(0, 100)).replace(/[\n\r\t]/g, ' ');
 
 			onProgress({
-				progress: 0.2 + ((i + 1) / chunkCount) * 0.75,
-				detail: snippet.length > 0 ? snippet : `Chunk ${i + 1}/${chunkCount}`
+				progress: 0.2 + ((chunkIndex + 1) / chunkCount) * 0.75,
+				detail: snippet.length > 0 ? snippet : `Chunk ${chunkIndex + 1}/${chunkCount}`
 			});
 		}
 	});

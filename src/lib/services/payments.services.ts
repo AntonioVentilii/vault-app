@@ -13,12 +13,14 @@ export const approveIcrc2 = async ({
 	identity,
 	ledgerType,
 	spender,
-	amount
+	amount,
+	expectedTransfersCount = 1
 }: {
 	identity: Identity;
 	ledgerType: LedgerType;
 	spender: Principal | string;
 	amount: bigint;
+	expectedTransfersCount?: number;
 }) => {
 	const ledgerCanisterId = LEDGER_CANISTER_IDS[ledgerType].toText();
 	const spenderPrincipal = typeof spender === 'string' ? Principal.fromText(spender) : spender;
@@ -28,7 +30,7 @@ export const approveIcrc2 = async ({
 	const result = await approve({
 		identity,
 		ledgerCanisterId,
-		amount: amount + fee,
+		amount: amount + fee * BigInt(expectedTransfersCount),
 		spender: { owner: spenderPrincipal },
 		expiresAt: BigInt(Date.now() + 60 * 60 * 1000) * 1_000_000n // Expires in 1 hour (in nanoseconds)
 	});
