@@ -15,10 +15,13 @@ import { filesStore, loadingFiles } from '$lib/stores/files.store';
 import type { Identity } from '@icp-sdk/core/agent';
 import type { Principal } from '@icp-sdk/core/principal';
 
-const runWithConcurrencyLimit = async <T>(
-	tasks: Array<() => Promise<T>>,
-	limit: number
-): Promise<T[]> => {
+const runWithConcurrencyLimit = async <T>({
+	tasks,
+	limit
+}: {
+	tasks: Array<() => Promise<T>>;
+	limit: number;
+}): Promise<T[]> => {
 	if (limit < 1) {
 		throw new Error('Concurrency limit must be at least 1');
 	}
@@ -118,7 +121,7 @@ export const uploadFile = async ({
 		}
 	});
 
-	await runWithConcurrencyLimit(chunkTasks, CONCURRENCY);
+	await runWithConcurrencyLimit({ tasks: chunkTasks, limit: CONCURRENCY });
 
 	const commit = await commitUpload({ identity, uploadId: session.upload_id });
 
