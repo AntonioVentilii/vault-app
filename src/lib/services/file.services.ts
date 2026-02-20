@@ -66,9 +66,9 @@ export const uploadFile = async ({
 	onProgress?: (progress: number) => void;
 }): Promise<DirectoryDid.FileMeta> => {
 	const ledgerId = LEDGER_CANISTER_IDS[ledgerType];
-
 	const paymentType: DirectoryDid.PaymentType = { CallerPaysIcrc2Tokens: { ledger: ledgerId } };
 
+	// 1. Phase 1: Start Upload
 	await approveIcrc2({
 		identity,
 		ledgerType,
@@ -86,27 +86,46 @@ export const uploadFile = async ({
 
 	const chunkCount = session.expected_chunk_count;
 
-	const CONCURRENCY = 6;
+	// 2. Phase 2: Batch tokens and approvals
+	const allChunkIndexes = Array.from({ length: chunkCount }, (_, i) => i);
+	// In a real app we might batch tokens in groups of 20, but for now we get all
+	const tokens = await getUploadTokens({
+		identity,
+		uploadId: session.upload_id,
+		chunkIndexes: allChunkIndexes
+	});
 
-	const chunkTasks = Array.from({ length: chunkCount }, (_, i) => async () => {
+	// Group tokens by bucket to perform a single approval per bucket
+	const bucketMap = new Map<string, { bucketId: Principal; amount: bigint }>();
+	const pricePerChunk = getPrice({ action: 'PUT_CHUNK', ledgerType });
+
+	for (const token of tokens) {
+		const bid = token.bucket_id.toText();
+		const current = bucketMap.get(bid) || { bucketId: token.bucket_id, amount: 0n };
+		bucketMap.set(bid, {
+			...current,
+			amount: current.amount + pricePerChunk
+		});
+	}
+
+	// Single approval per bucket
+	for (const { bucketId, amount } of bucketMap.values()) {
+		await approveIcrc2({
+			identity,
+			ledgerType,
+			spender: bucketId,
+			amount
+		});
+	}
+
+	// 3. Phase 2: Concurrent Chunking
+	const CONCURRENCY = 6;
+	const chunkTasks = tokens.map((token, i) => async () => {
 		const start = i * CHUNK_SIZE;
 		const end = Math.min(start + CHUNK_SIZE, file.size);
 		const blob = file.slice(start, end);
 		const arrayBuffer = await blob.arrayBuffer();
 		const data = new Uint8Array(arrayBuffer);
-
-		const [token] = await getUploadTokens({
-			identity,
-			uploadId: session.upload_id,
-			chunkIndexes: [i]
-		});
-
-		await approveIcrc2({
-			identity,
-			ledgerType,
-			spender: token.bucket_id,
-			amount: getPrice({ action: 'PUT_CHUNK', ledgerType })
-		});
 
 		await putChunk({
 			identity,
@@ -123,6 +142,7 @@ export const uploadFile = async ({
 
 	await runWithConcurrencyLimit({ tasks: chunkTasks, limit: CONCURRENCY });
 
+	// 4. Phase 3: Completion
 	const commit = await commitUpload({ identity, uploadId: session.upload_id });
 
 	return commit;
