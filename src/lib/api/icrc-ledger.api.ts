@@ -59,6 +59,20 @@ export const approve = async ({
 	});
 };
 
+export const balance = async ({
+	identity,
+	ledgerCanisterId,
+	account
+}: {
+	identity: Identity;
+	ledgerCanisterId: CanisterIdText;
+	account: IcrcAccount;
+}): Promise<bigint> => {
+	const { balance } = await ledgerCanister({ identity, ledgerCanisterId });
+
+	return balance(account);
+};
+
 const ledgerCanister = async ({
 	identity,
 	ledgerCanisterId

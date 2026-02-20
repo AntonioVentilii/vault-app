@@ -6,7 +6,7 @@
 	import { isDev, isNotSkylab, isProd } from '$lib/env/app.env';
 </script>
 
-<div class="flex w-fit flex-col">
+<div class="flex w-fit flex-col gap-2">
 	{#if isDev()}
 		<SignInDev />
 	{/if}

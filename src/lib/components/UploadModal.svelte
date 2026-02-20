@@ -56,6 +56,11 @@
 			[file] = target.files;
 		}
 	};
+
+	// eslint-disable-next-line require-await
+	const openModal = async () => {
+		open = true;
+	};
 </script>
 
 {#if open}
@@ -65,11 +70,7 @@
 		>
 			<div class="mb-6 flex items-center justify-between">
 				<h3 class="text-xl font-bold text-gray-900 dark:text-white">Upload New File</h3>
-				<Button
-					onclick={async () => {
-						open = false;
-					}}
-				>
+				<Button onclick={openModal}>
 					<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
 							d="M6 18L18 6M6 6l12 12"

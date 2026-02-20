@@ -7,7 +7,7 @@
 		onclick: () => Promise<void>;
 	}
 
-	let { disabled = undefined, children, onclick }: Props = $props();
+	const { disabled = undefined, children, onclick }: Props = $props();
 </script>
 
 <button

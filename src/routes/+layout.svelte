@@ -8,7 +8,7 @@
 		children: Snippet;
 	}
 
-	let { children }: Props = $props();
+	const { children }: Props = $props();
 
 	const init = async () => {
 		await initSatellite({

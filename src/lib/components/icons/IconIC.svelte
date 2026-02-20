@@ -10,7 +10,7 @@
 		title?: string;
 	}
 
-	let { size = '24px', title }: Props = $props();
+	const { size = '24px', title }: Props = $props();
 </script>
 
 <svg

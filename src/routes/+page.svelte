@@ -5,6 +5,11 @@
 	import UploadModal from '$lib/components/UploadModal.svelte';
 
 	let openUpload = $state(false);
+
+	// eslint-disable-next-line require-await
+	const openUploadModal = async () => {
+		openUpload = true;
+	};
 </script>
 
 <Auth>
@@ -17,7 +22,7 @@
 				<p class="mt-2 text-lg text-gray-500">Your decentralized, secure file vault.</p>
 			</div>
 			<div>
-				<Button onclick={() => (openUpload = true)}>
+				<Button onclick={openUploadModal}>
 					<svg class="mr-2 -ml-0.5 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
 						<path
 							clip-rule="evenodd"

@@ -5,7 +5,7 @@
 		withTitle?: boolean;
 	}
 
-	let { size = '24px', withTitle }: Props = $props();
+	const { size = '24px', withTitle }: Props = $props();
 </script>
 
 <svg
