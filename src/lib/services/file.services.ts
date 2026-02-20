@@ -103,12 +103,12 @@ export const uploadFile = async ({
 
 	for (const token of tokens) {
 		const bid = token.bucket_id.toText();
-		const numChunks = token.allowed_chunks.length;
+		const numChunksInToken = token.allowed_chunks.length;
 		const current = bucketMap.get(bid) ?? { bucketId: token.bucket_id, amount: ZERO, count: 0 };
 		bucketMap.set(bid, {
 			...current,
-			amount: current.amount + pricePerChunk * BigInt(numChunks),
-			count: current.count + numChunks
+			amount: current.amount + pricePerChunk * BigInt(numChunksInToken),
+			count: current.count + numChunksInToken
 		});
 	}
 
