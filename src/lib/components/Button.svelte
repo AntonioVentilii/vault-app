@@ -15,6 +15,7 @@
 	class="flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset"
 	class:cursor-not-allowed={disabled}
 	class:hover:bg-gray-50={!disabled}
+	class:hover:text-gray-700={!disabled}
 	class:text-gray-400={disabled}
 	{disabled}
 	{onclick}

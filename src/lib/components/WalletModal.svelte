@@ -152,16 +152,16 @@
 				</div>
 
 				<!-- Balances -->
-				<div class="grid grid-cols-2 gap-4">
+				<div class="grid grid-cols-2 gap-4 text-gray-900">
 					<div
 						class="rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-gray-800 dark:bg-gray-800/30"
 					>
 						<div class="flex items-center gap-2 text-sm text-gray-500">
-							<span class="font-bold text-gray-900 dark:text-white">ICP</span>
+							<span class="font-bold dark:text-white">ICP</span>
 						</div>
 
 						<div
-							class="mt-1 text-lg font-bold text-gray-900 dark:text-white"
+							class="mt-1 text-lg font-bold dark:text-white"
 							class:animate-pulse={loading}
 							class:text-gray-400={loading}
 						>
@@ -173,11 +173,11 @@
 						class="rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-gray-800 dark:bg-gray-800/30"
 					>
 						<div class="flex items-center gap-2 text-sm text-gray-500">
-							<span class="font-bold text-blue-600">ckUSDC</span>
+							<span class="font-bold">ckUSDC</span>
 						</div>
 
 						<div
-							class="mt-1 text-lg font-bold text-gray-900 dark:text-white"
+							class="mt-1 text-lg font-bold dark:text-white"
 							class:animate-pulse={loading}
 							class:text-gray-400={loading}
 						>
