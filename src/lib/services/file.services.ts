@@ -7,7 +7,7 @@ import {
 	listFiles,
 	startUpload
 } from '$lib/api/directory.api';
-import { CHUNK_SIZE } from '$lib/constants/app.constants';
+import { CHUNK_SIZE, ZERO } from '$lib/constants/app.constants';
 import { DIRECTORY_CANISTER_ID } from '$lib/constants/directory.constants';
 import { LEDGER_CANISTER_IDS } from '$lib/constants/ledger.constants';
 import { approveIcrc2, getPrice, type LedgerType } from '$lib/services/payments.services';
@@ -63,18 +63,20 @@ export const uploadFile = async ({
 	identity: Identity;
 	file: File;
 	ledgerType: LedgerType;
-	onProgress?: (progress: number) => void;
+	onProgress?: ({ progress, detail }: { progress: number; detail?: string }) => void;
 }): Promise<DirectoryDid.FileMeta> => {
 	const ledgerId = LEDGER_CANISTER_IDS[ledgerType];
 	const paymentType: DirectoryDid.PaymentType = { CallerPaysIcrc2Tokens: { ledger: ledgerId } };
 
-	// 1. Phase 1: Start Upload
+	onProgress?.({ progress: 0, detail: 'Approving tokens for session...' });
 	await approveIcrc2({
 		identity,
 		ledgerType,
 		spender: DIRECTORY_CANISTER_ID,
 		amount: getPrice({ action: 'START_UPLOAD', ledgerType })
 	});
+
+	onProgress?.({ progress: 0.05, detail: 'Starting upload session...' });
 
 	const session = await startUpload({
 		identity,
@@ -88,7 +90,7 @@ export const uploadFile = async ({
 
 	// 2. Phase 2: Batch tokens and approvals
 	const allChunkIndexes = Array.from({ length: chunkCount }, (_, i) => i);
-	// In a real app we might batch tokens in groups of 20, but for now we get all
+	onProgress?.({ progress: 0.1, detail: 'Fetching upload tokens...' });
 	const tokens = await getUploadTokens({
 		identity,
 		uploadId: session.upload_id,
@@ -101,7 +103,7 @@ export const uploadFile = async ({
 
 	for (const token of tokens) {
 		const bid = token.bucket_id.toText();
-		const current = bucketMap.get(bid) || { bucketId: token.bucket_id, amount: 0n };
+		const current = bucketMap.get(bid) ?? { bucketId: token.bucket_id, amount: ZERO };
 		bucketMap.set(bid, {
 			...current,
 			amount: current.amount + pricePerChunk
@@ -109,7 +111,13 @@ export const uploadFile = async ({
 	}
 
 	// Single approval per bucket
+	let bucketIndex = 0;
 	for (const { bucketId, amount } of bucketMap.values()) {
+		bucketIndex++;
+		onProgress?.({
+			progress: 0.1 + (bucketIndex / bucketMap.size) * 0.1,
+			detail: `Approving bucket ${bucketIndex}/${bucketMap.size}...`
+		});
 		await approveIcrc2({
 			identity,
 			ledgerType,
@@ -136,14 +144,22 @@ export const uploadFile = async ({
 		});
 
 		if (onProgress) {
-			onProgress((i + 1) / chunkCount);
+			const decoder = new TextDecoder();
+			const snippet = decoder.decode(data.slice(0, 100)).replace(/[\n\r\t]/g, ' ');
+
+			onProgress({
+				progress: 0.2 + ((i + 1) / chunkCount) * 0.75,
+				detail: snippet.length > 0 ? snippet : `Chunk ${i + 1}/${chunkCount}`
+			});
 		}
 	});
 
 	await runWithConcurrencyLimit({ tasks: chunkTasks, limit: CONCURRENCY });
 
 	// 4. Phase 3: Completion
+	onProgress?.({ progress: 0.98, detail: 'Committing upload...' });
 	const commit = await commitUpload({ identity, uploadId: session.upload_id });
+	onProgress?.({ progress: 1, detail: 'Upload complete!' });
 
 	return commit;
 };
