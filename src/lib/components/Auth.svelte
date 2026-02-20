@@ -2,9 +2,9 @@
 	import { onAuthStateChange } from '@junobuild/core';
 	import { onDestroy, onMount, type Snippet } from 'svelte';
 	import Logout from '$lib/components/Logout.svelte';
+	import SignIn from '$lib/components/SignIn.svelte';
 	import { userSignedIn } from '$lib/derived/user.derived';
 	import { userStore } from '$lib/stores/user.store';
-	import SignIn from '$lib/components/SignIn.svelte';
 
 	interface Props {
 		children: Snippet;
