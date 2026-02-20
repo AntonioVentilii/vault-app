@@ -96,8 +96,8 @@
 	});
 
 	// eslint-disable-next-line require-await
-	const openModal = async () => {
-		open = true;
+	const closeModal = async () => {
+		open = false;
 	};
 </script>
 
@@ -108,7 +108,7 @@
 		>
 			<div class="mb-6 flex items-center justify-between">
 				<h3 class="text-xl font-bold text-gray-900 dark:text-white">Your Wallet</h3>
-				<Button onclick={openModal}>
+				<Button onclick={closeModal}>
 					<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
 							d="M6 18L18 6M6 6l12 12"

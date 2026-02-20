@@ -28,7 +28,7 @@ export const approveIcrc2 = async ({
 		ledgerCanisterId,
 		amount,
 		spender: { owner: spenderPrincipal },
-		expiresAt: BigInt(Date.now() + 60 * 60 * 1000) // Expires in 1 hour
+		expiresAt: BigInt(Date.now() + 60 * 60 * 1000) * 1_000_000n // Expires in 1 hour (in nanoseconds)
 	});
 
 	return result;

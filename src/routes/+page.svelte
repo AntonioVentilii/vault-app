@@ -18,7 +18,7 @@
 			class="mb-10 flex items-end justify-between border-b border-gray-200 pt-16 pb-10 dark:border-gray-800"
 		>
 			<div>
-				<h1 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">Vault Core</h1>
+				<h1 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">SoVault</h1>
 				<p class="mt-2 text-lg text-gray-500">Your decentralized, secure file vault.</p>
 			</div>
 			<div>
