@@ -129,6 +129,13 @@ export const uploadFile = async ({
 	// 3. Phase 2: Concurrent Chunking
 	const CONCURRENCY = 6;
 	const chunkTasks = tokens.map((token, i) => async () => {
+		if (onProgress) {
+			onProgress({
+				progress: 0.2 + (i / chunkCount) * 0.75,
+				detail: `Preparing chunk ${i + 1}/${chunkCount}...`
+			});
+		}
+
 		const start = i * CHUNK_SIZE;
 		const end = Math.min(start + CHUNK_SIZE, file.size);
 		const blob = file.slice(start, end);
