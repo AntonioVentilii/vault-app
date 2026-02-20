@@ -14,6 +14,7 @@
 </script>
 
 <svg
+	class="align-middle"
 	fill="none"
 	height={size}
 	viewBox="0 0 152 152"
@@ -31,23 +32,3 @@
 		transform="translate(14,14)"
 	/>
 </svg>
-
-<style lang="scss">
-	@use '../../styles/mixins/media';
-
-	@include media.light-theme {
-		svg {
-			circle {
-				fill: black;
-			}
-
-			path {
-				fill: white;
-			}
-		}
-	}
-
-	svg {
-		vertical-align: middle;
-	}
-</style>
