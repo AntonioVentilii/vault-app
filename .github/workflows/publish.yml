@@ -1,4 +1,5 @@
 name: Publish Serverless Functions
+
 permissions:
   contents: read
 
