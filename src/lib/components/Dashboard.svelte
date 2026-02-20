@@ -3,6 +3,7 @@
 	import { getIdentityOnce } from '@junobuild/core';
 	import type { DirectoryDid } from '$declarations';
 	import { deleteFile } from '$lib/api/directory.api';
+	import Button from '$lib/components/Button.svelte';
 	import { userSignedIn } from '$lib/derived/user.derived';
 	import { downloadFile, refreshFiles } from '$lib/services/file.services';
 	import { filesStore, loadingFiles } from '$lib/stores/files.store';
@@ -77,17 +78,14 @@
 <div class="space-y-6">
 	<div class="flex items-center justify-between">
 		<h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Your Files</h2>
-		<button
-			class="flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50"
-			onclick={handleRefresh}
-		>
+		<Button onclick={handleRefresh}>
 			{#if $loadingFiles}
 				<div
 					class="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600"
 				></div>
 			{/if}
 			Refresh
-		</button>
+		</Button>
 	</div>
 
 	{#if $filesStore.length === 0}
@@ -146,18 +144,8 @@
 							</td>
 							<td class="px-6 py-4 text-right text-sm font-medium whitespace-nowrap">
 								<div class="flex justify-end gap-3">
-									<button
-										class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
-										onclick={() => handleDownload(file)}
-									>
-										Download
-									</button>
-									<button
-										class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-										onclick={() => handleDelete(file.file_id)}
-									>
-										Delete
-									</button>
+									<Button onclick={() => handleDownload(file)}>Download</Button>
+									<Button onclick={() => handleDelete(file.file_id)}>Delete</Button>
 								</div>
 							</td>
 						</tr>

@@ -1,14 +1,11 @@
 <script lang="ts">
 	import { signOut } from '@junobuild/core';
+	import Button from '$lib/components/Button.svelte';
 
 	const doSignOut = (): Promise<void> => signOut();
 </script>
 
-<button
-	class="hover:text-lavender-blue-500 active:text-lavender-blue-400 mt-24 flex items-center gap-2 dark:text-white"
-	onclick={doSignOut}
-	type="button"
->
+<Button onclick={doSignOut}>
 	<svg
 		fill="currentColor"
 		height="16"
@@ -23,4 +20,4 @@
 	<span>
 		<small>Logout</small>
 	</span>
-</button>
+</Button>

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { isNullish } from '@dfinity/utils';
 	import { getIdentityOnce } from '@junobuild/core';
+	import Button from '$lib/components/Button.svelte';
 	import { userNotSignedIn } from '$lib/derived/user.derived';
 	import { refreshFiles, uploadFile } from '$lib/services/file.services';
 
@@ -64,10 +65,10 @@
 		>
 			<div class="mb-6 flex items-center justify-between">
 				<h3 class="text-xl font-bold text-gray-900 dark:text-white">Upload New File</h3>
-				<button
-					class="text-gray-400 hover:text-gray-600"
-					aria-label="Close"
-					onclick={() => (open = false)}
+				<Button
+					onclick={async () => {
+						open = false;
+					}}
 				>
 					<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
@@ -77,7 +78,7 @@
 							stroke-width="2"
 						/>
 					</svg>
-				</button>
+				</Button>
 			</div>
 
 			<div class="space-y-4">
@@ -156,13 +157,9 @@
 					</div>
 				{/if}
 
-				<button
-					class="w-full rounded-xl bg-blue-600 py-3 text-sm font-bold text-white shadow-lg transition-all hover:bg-blue-500 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
-					disabled={!file || uploading}
-					onclick={handleUpload}
-				>
+				<Button disabled={!file || uploading} onclick={handleUpload}>
 					{uploading ? 'Processing chunks...' : 'Start Secure Upload'}
-				</button>
+				</Button>
 			</div>
 		</div>
 	</div>

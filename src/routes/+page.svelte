@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Auth from '$lib/components/Auth.svelte';
+	import Button from '$lib/components/Button.svelte';
 	import Dashboard from '$lib/components/Dashboard.svelte';
 	import UploadModal from '$lib/components/UploadModal.svelte';
 
@@ -16,10 +17,7 @@
 				<p class="mt-2 text-lg text-gray-500">Your decentralized, secure file vault.</p>
 			</div>
 			<div>
-				<button
-					class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 active:scale-95"
-					onclick={() => (openUpload = true)}
-				>
+				<Button onclick={() => (openUpload = true)}>
 					<svg class="mr-2 -ml-0.5 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
 						<path
 							clip-rule="evenodd"
@@ -28,7 +26,7 @@
 						/>
 					</svg>
 					Upload File
-				</button>
+				</Button>
 			</div>
 		</header>
 
