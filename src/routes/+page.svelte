@@ -19,7 +19,7 @@
 		>
 			<div>
 				<h1 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">SoVault</h1>
-				<p class="mt-2 text-lg text-gray-500">Your decentralized, secure file vault.</p>
+				<p class="mt-2 text-lg text-gray-500">Your sovereign, secure file vault.</p>
 			</div>
 			<div>
 				<Button onclick={openUploadModal}>

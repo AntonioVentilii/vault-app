@@ -64,6 +64,10 @@
 	// eslint-disable-next-line require-await
 	const closeModal = async () => {
 		open = false;
+		file = null;
+		uploading = false;
+		progress = 0;
+		error = null;
 	};
 </script>
 
@@ -111,7 +115,11 @@
 							/>
 						</svg>
 						<p class="text-sm text-gray-600 dark:text-gray-400">
-							{#if file}{file.name}{:else}Click or drag file to upload{/if}
+							{#if file}
+								{file.name}
+							{:else}
+								Click or drag file to upload
+							{/if}
 						</p>
 					</div>
 				</div>
@@ -122,20 +130,21 @@
 							name="ledger"
 							disabled={uploading}
 							type="radio"
-							value="ckUSDC"
+							value="ICP"
 							bind:group={ledgerType}
 						/>
-						<span class="text-sm dark:text-gray-300">ckUSDC</span>
+						<span class="text-sm dark:text-gray-300">ICP</span>
 					</label>
+
 					<label class="flex cursor-pointer items-center gap-2">
 						<input
 							name="ledger"
 							disabled={uploading}
 							type="radio"
-							value="ICP"
+							value="ckUSDC"
 							bind:group={ledgerType}
 						/>
-						<span class="text-sm dark:text-gray-300">ICP</span>
+						<span class="text-sm dark:text-gray-300">ckUSDC</span>
 					</label>
 				</div>
 
