@@ -1,7 +1,6 @@
-export const MODE = 'local';
-export const LOCAL = MODE === 'local';
+import { isDev } from '$lib/env/app.env';
 
-export const REPLICA_HOST = LOCAL ? 'http://localhost:5987/' : 'https://icp-api.io';
+export const REPLICA_HOST = isDev() ? 'http://localhost:5987/' : 'https://icp-api.io';
 
 // eslint-disable-next-line no-restricted-syntax -- This is the definition
 export const ZERO = 0n;
