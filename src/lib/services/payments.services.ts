@@ -1,4 +1,4 @@
-import { approve } from '$lib/api/icrc-ledger.api';
+import { approve, getTransactionFee } from '$lib/api/icrc-ledger.api';
 import { LEDGER_CANISTER_IDS } from '$lib/constants/ledger.constants';
 import { PRICING } from '$lib/constants/pricing.constants';
 import type { Identity } from '@icp-sdk/core/agent';
@@ -23,10 +23,12 @@ export const approveIcrc2 = async ({
 	const ledgerCanisterId = LEDGER_CANISTER_IDS[ledgerType].toText();
 	const spenderPrincipal = typeof spender === 'string' ? Principal.fromText(spender) : spender;
 
+	const fee = await getTransactionFee({ identity, ledgerCanisterId });
+
 	const result = await approve({
 		identity,
 		ledgerCanisterId,
-		amount,
+		amount: amount + fee,
 		spender: { owner: spenderPrincipal },
 		expiresAt: BigInt(Date.now() + 60 * 60 * 1000) * 1_000_000n // Expires in 1 hour (in nanoseconds)
 	});

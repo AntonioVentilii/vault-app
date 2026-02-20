@@ -73,6 +73,18 @@ export const balance = async ({
 	return balance(account);
 };
 
+export const getTransactionFee = async ({
+	identity,
+	ledgerCanisterId
+}: {
+	identity: Identity;
+	ledgerCanisterId: CanisterIdText;
+}): Promise<bigint> => {
+	const { transactionFee } = await ledgerCanister({ identity, ledgerCanisterId });
+
+	return transactionFee({});
+};
+
 const ledgerCanister = async ({
 	identity,
 	ledgerCanisterId
