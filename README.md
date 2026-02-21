@@ -1,4 +1,11 @@
-# 🛡️ SoVault App
+<h1 align="left">
+  <a href="https://sovault.app/">
+    <img src="https://github.com/antonioventilii/vault-app/raw/main/static/logo/vault-icon.webp"
+         width="40"
+         style="vertical-align: middle;" />
+  </a>
+  <span style="vertical-align: middle;">SoVault App</span>
+</h1>
 
 [![GitHub Checks Workflow Status](https://img.shields.io/github/actions/workflow/status/AntonioVentilii/vault-app/checks.yml?logo=github&label=Checks)](https://github.com/AntonioVentilii/vault-app/actions/workflows/checks.yml)
 [![GitHub Deploy Workflow Status](https://img.shields.io/github/actions/workflow/status/AntonioVentilii/vault-app/deploy.yml?logo=github&label=Deploy)](https://github.com/AntonioVentilii/vault-app/actions/workflows/deploy.yml)
