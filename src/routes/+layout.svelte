@@ -24,7 +24,7 @@
 	});
 </script>
 
-<div class="relative isolate min-h-[100dvh] bg-gray-50 dark:bg-gray-950">
+<div class="relative isolate min-h-dvh bg-gray-50 dark:bg-gray-950">
 	<main class="mx-auto max-w-(--breakpoint-2xl) px-4 py-8 md:px-8">
 		{@render children()}
 	</main>
