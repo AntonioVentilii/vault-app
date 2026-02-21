@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { signIn } from '@junobuild/core';
 	import Button from '$lib/components/Button.svelte';
+	import IconPasskey from '$lib/components/icons/IconPasskey.svelte';
 
 	const signInWithPassKey = async () => {
 		await signIn({
@@ -10,5 +11,6 @@
 </script>
 
 <Button onclick={signInWithPassKey}>
+	<IconPasskey size="20px" />
 	<span>Sign in with Passkey</span>
 </Button>

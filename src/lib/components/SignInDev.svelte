@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { signIn } from '@junobuild/core';
 	import Button from '$lib/components/Button.svelte';
+	import IconRobot from '$lib/components/icons/IconRobot.svelte';
 
 	const signInWithDev = async () => {
 		// Sign in for local development and E2E only
@@ -10,4 +11,7 @@
 	};
 </script>
 
-<Button onclick={signInWithDev}>Sign in for dev</Button>
+<Button onclick={signInWithDev}>
+	<IconRobot size="20px" />
+	Sign in for Dev
+</Button>
