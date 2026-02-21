@@ -21,6 +21,7 @@
 				<h1 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">SoVault</h1>
 				<p class="mt-2 text-lg text-gray-500">Your sovereign, secure file vault.</p>
 			</div>
+
 			<div>
 				<Button onclick={openUploadModal}>
 					<svg class="mr-2 -ml-0.5 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">

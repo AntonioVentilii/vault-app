@@ -2,6 +2,7 @@
 	import { onAuthStateChange } from '@junobuild/core';
 	import { onDestroy, onMount, type Snippet } from 'svelte';
 	import Button from '$lib/components/Button.svelte';
+	import GitHubButton from '$lib/components/GitHubButton.svelte';
 	import Logout from '$lib/components/Logout.svelte';
 	import SignIn from '$lib/components/SignIn.svelte';
 	import WalletModal from '$lib/components/WalletModal.svelte';
@@ -35,7 +36,9 @@
 
 {#if $userSignedIn}
 	<div class="space-y-4">
-		<div class="flex justify-end gap-2 p-4">
+		<div class="flex justify-end gap-3 p-4">
+			<GitHubButton />
+
 			<Button onclick={openWalletModal}>
 				<svg
 					class="h-5 w-5"
@@ -52,6 +55,7 @@
 					/>
 				</svg>
 			</Button>
+
 			<Logout />
 		</div>
 		{@render children()}
