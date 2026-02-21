@@ -41,7 +41,7 @@
 			"type": "persistent"
 		},
 		"local": {
-			"bind": "127.0.0.1:4943",
+			"bind": "127.0.0.1:5987",
 			"type": "ephemeral"
 		}
 	}

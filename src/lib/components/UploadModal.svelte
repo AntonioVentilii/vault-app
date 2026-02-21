@@ -49,6 +49,7 @@
 
 			file = null;
 		} catch (err: unknown) {
+			console.error('Upload failed', err);
 			error = (err as Error).message ?? 'Upload failed. Please check your balance.';
 		} finally {
 			uploading = false;
