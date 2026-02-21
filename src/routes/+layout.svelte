@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { initSatellite } from '@junobuild/core';
 	import type { Snippet } from 'svelte';
+	import Footer from '$lib/components/Footer.svelte';
 	// eslint-disable-next-line import/no-relative-parent-imports
 	import '../app.css';
 
@@ -27,4 +28,6 @@
 	<main class="mx-auto max-w-(--breakpoint-2xl) px-4 py-8 md:px-8">
 		{@render children()}
 	</main>
+
+	<Footer />
 </div>
