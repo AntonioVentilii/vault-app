@@ -1,5 +1,8 @@
 # 🛡️ SoVault App
 
+[![GitHub Checks Workflow Status](https://img.shields.io/github/actions/workflow/status/AntonioVentilii/vault-app/checks.yml?logo=github&label=Checks)](https://github.com/AntonioVentilii/vault-app/actions/workflows/checks.yml)
+[![GitHub Deploy Workflow Status](https://img.shields.io/github/actions/workflow/status/AntonioVentilii/vault-app/deploy.yml?logo=github&label=Deploy)](https://github.com/AntonioVentilii/vault-app/actions/workflows/deploy.yml)
+
 Welcome to **SoVault App**, the official frontend application for [SoVault Core](https://github.com/AntonioVentilii/vault-core) — a high-performance, pay-as-you-go sharded file storage system built on the Internet Computer (ICP).
 
 🌍 **Main Domain**: [sovault.app](https://sovault.app/)  
