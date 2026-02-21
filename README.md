@@ -1,114 +1,81 @@
-# Juno: SvelteKit Example
+# 🛡️ SoVault App
 
-```sh
-npm create juno@latest -- --template sveltekit-example
-```
+Welcome to **SoVault App**, the official frontend application for [SoVault Core](https://github.com/AntonioVentilii/vault-core) — a high-performance, pay-as-you-go sharded file storage system built on the Internet Computer (ICP).
 
-> 🧑‍🚀 **Seasoned dev?** Delete this file. Have fun!
+🌍 **Main Domain**: [sovault.app](https://sovault.app/)  
+🛠️ **Canister App**: [https://z6kq3-iqaaa-aaaal-asxhq-cai.icp0.io/](https://z6kq3-iqaaa-aaaal-asxhq-cai.icp0.io/)
 
-![A screenshot of the example](https://raw.githubusercontent.com/junobuild/create-juno/main/screenshots/screenshot-example.png)
+## 📖 What is this?
 
-An example developed for [Juno](https://juno.build) using [SvelteKit](https://kit.svelte.dev/).
+**SoVault (_Sovereign Vault_) App** is the sleek, modern, user-facing interface for the **SoVault Core** library. It provides an intuitive experience for users to securely store, manage, and share their files on the Internet Computer.
 
-## 🧭 Getting Started
+The application is built using **SvelteKit** and integrates directly with the **SoVault Core** canisters. It transparently handles complex operations for the user:
 
-To start experimenting with Juno locally, follow these steps:
+- **Authentication**: Secure, seamless sign-in using Internet Identity, Passkey, or Google (_coming soon_).
+- **File Uploading & Chunking**: Slicing large files into manageable chunks (1MB each) locally in the browser and uploading them concurrently to storage buckets.
+- **Permissions & Access**: Managing ICRC-2 token approvals (ICP/ckUSDC) for **SoVault Core**'s scalable "Pay-As-You-Go" storage model.
+- **Downloading & Reassembly**: Retrieving download plans, parallel fetching of chunks across buckets, and reconstructing the original file efficiently.
+- **Granular Sharing**: Easy generation of public links and managing Access Control Lists (ACLs).
 
-### 1. Start the local development emulator
+## 🔗 Integration Details
 
-This will spin up the Juno backend locally:
+This frontend was built by more or less strictly following the principles outlined in the [**SoVault Core** Integration Guide](https://github.com/AntonioVentilii/vault-core/blob/main/INTEGRATION_GUIDE.md).
+
+While the fundamental protocol logic (initiation, concurrent chunking, ICP/ckUSDC approvals, completion, and retrieval) remains identical, a few custom architecture adjustments were implemented to fit seamlessly with our SvelteKit application. These adjustments mostly focus on optimising concurrent token approvals, managing store dependencies efficiently, and enriching UI/UX with smooth upload progress tracking.
+
+## 🛠️ Tech Stack
+
+- **Framework**: [SvelteKit](https://kit.svelte.dev/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Integration**: `@dfinity/agent`, `@icp-sdk/canisters`, and Juno Tooling
+- **Language**: TypeScript
+
+## 🚀 Getting Started Locally
+
+### Prerequisites
+
+- Node.js (see `.node-version` file for recommended version)
+- `npm`
+- Juno CLI (installation instructions: [Juno CLI Documentation](https://juno.build/docs/reference/cli))
+
+### Start the local Juno emulator
+
+This spins up the Juno emulator locally for development:
 
 ```bash
 juno emulator start
 ```
 
-### 2. Create a Satellite
+Ensure your `juno.config.ts` is configured with the correct Satellite IDs.
 
-Your project needs a Satellite. Create one to connect your app for development.
+### Installation
 
-👉 [Open the Juno Console](http://localhost:5866)
+Install the dependencies:
 
-### 3. Configure your project
-
-Set the Satellite ID in your `juno.config.ts` file:
-
-```ts
-import { defineConfig } from '@junobuild/config';
-
-export default defineConfig({
-	satellite: {
-		ids: {
-			development: '<DEV_SATELLITE_ID>'
-		},
-		source: 'build',
-		predeploy: ['npm run build']
-	}
-});
+```bash
+npm ci
 ```
 
-### 4. Start the frontend dev server
+### Running the App
 
-In another terminal, start your app's dev server:
+Start the development server:
 
 ```bash
 npm run dev
 ```
 
-### 5. Create a Datastore collection
+## 🤝 Contributing
 
-This template is a note-taking app, so it needs a `notes` collection. Create it in the Datastore.
+Since this repository is strictly the frontend component of **SoVault Core**, any backend issues, canister bugs, or core architecture contributions should be directed to the [**SoVault Core** Repository](https://github.com/AntonioVentilii/vault-core).
 
-👉 [Go to Datastore](http://localhost:5866/datastore)
+However, any UI/UX improvements, frontend optimisations, or integration enhancements for the **SoVault App** are very welcome here! Please open issues and/or submit pull requests with your contributions.
 
-### 6. Create a Storage collection
+## 🙏 Acknowledgements & Credits
 
-Likewise, it needs a collection named `images` to save assets. Create it in the Storage.
+A massive thank you to the [Juno](https://juno.build/) project.
 
-👉 [Go to Storage](http://localhost:5866/storage)
+The baseline of this entire application was initialised via the Juno CLI and templates. Furthermore, several core service integrations, utility scripts, components, and architectural conventions in the **SoVault App** were directly inspired by or derived from the Juno open-source repositories. We are deeply grateful for their robust tooling and ecosystem!
 
-You only need to do this once. After that, you're ready to build 🚀
+---
 
-## 🛰️ Production
-
-Ready to go live?
-
-Just like for local development, you'll need to create a Satellite — but this time on the mainnet [Console](https://console.juno.build). Then, update your `juno.config.ts` with the new Satellite ID:
-
-```ts
-import { defineConfig } from '@junobuild/config';
-
-export default defineConfig({
-	satellite: {
-		ids: {
-			development: '<DEV_SATELLITE_ID>',
-			production: '<PROD_SATELLITE_ID>'
-		},
-		source: 'build',
-		predeploy: ['npm run build']
-	}
-});
-```
-
-Check out the full guides in the [docs](https://juno.build/docs/category/deployment).
-
-## ✨ Links & Resources
-
-- Looking to get started with Juno? Check out the [documentation](https://juno.build).
-- Have a look at [SvelteKit](https://kit.svelte.dev/) for question regarding the templates.
-- Got questions, comments or feedback? [Join our discord](https://discord.gg/wHZ57Z2RAG) or [OpenChat](https://oc.app/community/vxgpi-nqaaa-aaaar-ar4lq-cai/?ref=xanzv-uaaaa-aaaaf-aneba-cai).
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command               | Action                                         |
-| :-------------------- | :--------------------------------------------- |
-| `npm install`         | Installs dependencies                          |
-| `npm run dev`         | Starts frontend dev server at `localhost:5173` |
-| `juno emulator start` | Quickstart the local development emulator      |
-| `npm run build`       | Build your production site to `./build/`       |
-| `juno hosting deploy` | Deploy your project to a Satellite             |
-
-## 🚀 Launch
-
-Explore this [guide](https://juno.build/docs/add-juno-to-an-app/create-a-satellite) to launch your Satellite into orbit via Juno's [administration console](https://console.juno.build).
+_Built with ❤️ on the Internet Computer._
