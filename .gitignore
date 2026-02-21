@@ -20,3 +20,5 @@ vite.config.ts.timestamp-*
 static/workers
 
 target
+
+.dfx/

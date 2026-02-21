@@ -1,0 +1,48 @@
+{
+	"dfx": "0.26.1",
+	"canisters": {
+		"directory": {
+			"type": "custom",
+			"build": "scripts/build.vault.directory.sh",
+			"candid": "target/vault/directory.did",
+			"wasm": "target/vault/directory.wasm",
+			"specified_id": "vkgwx-paaaa-aaaak-qw5ya-cai",
+			"init_arg_file": "target/vault/directory.args.did",
+			"remote": {
+				"id": {
+					"staging": "vkgwx-paaaa-aaaak-qw5ya-cai"
+				}
+			}
+		},
+		"bucket": {
+			"type": "custom",
+			"build": "scripts/build.vault.bucket.sh",
+			"candid": "target/vault/bucket.did",
+			"wasm": "target/vault/bucket.wasm",
+			"specified_id": "xx3y7-4iaaa-aaaak-qw5xq-cai",
+			"init_arg_file": "target/vault/bucket.args.did",
+			"remote": {
+				"id": {
+					"staging": "xx3y7-4iaaa-aaaak-qw5xq-cai"
+				}
+			}
+		}
+	},
+	"defaults": {
+		"build": {
+			"args": "",
+			"packtool": ""
+		}
+	},
+	"version": 1,
+	"networks": {
+		"staging": {
+			"providers": ["https://icp0.io"],
+			"type": "persistent"
+		},
+		"local": {
+			"bind": "127.0.0.1:5987",
+			"type": "ephemeral"
+		}
+	}
+}
