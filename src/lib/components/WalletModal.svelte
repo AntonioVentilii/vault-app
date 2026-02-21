@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { isNullish, nonNullish } from '@dfinity/utils';
+	import { encodeIcrcAccount } from '@icp-sdk/canisters/ledger/icrc';
 	import { getIdentityOnce } from '@junobuild/core';
 	import { onMount } from 'svelte';
 	import { balance } from '$lib/api/icrc-ledger.api';
 	import Button from '$lib/components/Button.svelte';
 	import { LEDGER_CANISTER_IDS } from '$lib/constants/ledger.constants';
+	import { isDev } from '$lib/env/app.env';
 	import { userStore } from '$lib/stores/user.store';
 
 	let { open = $bindable(false) } = $props();
@@ -47,11 +49,13 @@
 					ledgerCanisterId: LEDGER_CANISTER_IDS.ICP.toText(),
 					account
 				}),
-				balance({
-					identity,
-					ledgerCanisterId: LEDGER_CANISTER_IDS.ckUSDC.toText(),
-					account
-				})
+				isDev()
+					? null
+					: balance({
+							identity,
+							ledgerCanisterId: LEDGER_CANISTER_IDS.ckUSDC.toText(),
+							account
+						})
 			]);
 
 			icpBalance = icp;
@@ -98,6 +102,28 @@
 	// eslint-disable-next-line require-await
 	const closeModal = async () => {
 		open = false;
+	};
+
+	const receiveTestIcp = async () => {
+		if (isDev()) {
+			try {
+				const identity = await getIdentityOnce();
+
+				if (isNullish(identity)) {
+					return;
+				}
+
+				const response = await fetch(
+					`http://localhost:5999/ledger/transfer/?to=${encodeIcrcAccount({ owner: identity.getPrincipal() })}&ledgerId=${LEDGER_CANISTER_IDS.ICP.toText()}&amount=${1_000_000_000}` // 10 ICP
+				);
+
+				if (!response.ok) {
+					throw new Error('Failed to request test ICP', { cause: response });
+				}
+			} catch (err: unknown) {
+				console.error('Failed to request test ICP', err);
+			}
+		}
 	};
 </script>
 
@@ -194,7 +220,7 @@
 					</div>
 				{/if}
 
-				<div class="flex gap-3">
+				<div class="flex flex-col gap-3">
 					<Button busy={loading} disabled={loading} onclick={fetchBalances}>
 						{#if loading}
 							Refreshing Balances...
@@ -202,6 +228,10 @@
 							Refresh Balances
 						{/if}
 					</Button>
+
+					{#if isDev()}
+						<Button onclick={receiveTestIcp}>Get ICP</Button>
+					{/if}
 				</div>
 			</div>
 		</div>

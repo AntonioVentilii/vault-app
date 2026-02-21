@@ -3,6 +3,7 @@
 	import { getIdentityOnce } from '@junobuild/core';
 	import Button from '$lib/components/Button.svelte';
 	import { userNotSignedIn } from '$lib/derived/user.derived';
+	import { isDev } from '$lib/env/app.env';
 	import { refreshFiles, uploadFile } from '$lib/services/file.services';
 
 	let { open = $bindable(false) } = $props();
@@ -139,7 +140,7 @@
 					<label class="flex cursor-pointer items-center gap-2">
 						<input
 							name="ledger"
-							disabled={uploading}
+							disabled={uploading || isDev()}
 							type="radio"
 							value="ckUSDC"
 							bind:group={ledgerType}
