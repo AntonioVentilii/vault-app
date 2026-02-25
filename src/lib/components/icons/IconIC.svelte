@@ -3,8 +3,6 @@
 <!-- otherwise it looks odd -->
 <!-- final source: https://github.com/junobuild/juno/blob/d080166f2b5896f76131e9e469036a6abc99c831/src/frontend/src/lib/components/icons/IconIC.svelte -->
 <script lang="ts">
-	import { nonNullish } from '@dfinity/utils';
-
 	interface Props {
 		size?: string;
 	}
