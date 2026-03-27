@@ -15,7 +15,7 @@
 		"postinstall": "npm run postinstall:copy-auth"
 	},
 	"devDependencies": {
-		"@dfinity/eslint-config-oisy-wallet": "^0.2.3",
+		"@dfinity/eslint-config-oisy-wallet": "^0.2.4",
 		"@junobuild/config": "^2.11.0",
 		"@junobuild/vite-plugin": "^4.7.0",
 		"@sveltejs/adapter-static": "^3.0.9",
