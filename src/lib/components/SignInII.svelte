@@ -1,12 +1,10 @@
 <script lang="ts">
-	import { signIn } from '@junobuild/core';
 	import Button from '$lib/components/Button.svelte';
 	import IconIc from '$lib/components/icons/IconIC.svelte';
+	import { signIn } from '$lib/services/auth.services';
 
 	const signInWithII = async () => {
-		await signIn({
-			internet_identity: {}
-		});
+		await signIn();
 	};
 </script>
 

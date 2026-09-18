@@ -37,7 +37,7 @@ While the fundamental protocol logic (initiation, concurrent chunking, ICP/ckUSD
 
 - **Framework**: [SvelteKit](https://kit.svelte.dev/)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **Integration**: `@dfinity/agent`, `@icp-sdk/canisters`, and Juno Tooling
+- **Integration**: `@dfinity/agent`, `@icp-sdk/canisters`, `@icp-sdk/auth`
 - **Language**: TypeScript
 
 ## 🚀 Getting Started Locally
@@ -46,17 +46,20 @@ While the fundamental protocol logic (initiation, concurrent chunking, ICP/ckUSD
 
 - Node.js (see `.node-version` file for recommended version)
 - `npm`
-- Juno CLI (installation instructions: [Juno CLI Documentation](https://juno.build/docs/reference/cli))
+- Juno CLI — for the local emulator only; deploys no longer use it
+  ([Juno CLI Documentation](https://juno.build/docs/reference/cli))
 
-### Start the local Juno emulator
+### Start the local emulator
 
-This spins up the Juno emulator locally for development:
+This spins up a local satellite to develop against. It is the only remaining
+Juno dependency and never ships to production:
 
 ```bash
 juno emulator start
 ```
 
-Ensure your `juno.config.ts` is configured with the correct Satellite IDs.
+The satellite IDs used for deploys live in `package.json`'s `deploy` script and
+`.github/workflows/deploy.yml`.
 
 ### Installation
 
@@ -84,7 +87,7 @@ However, any UI/UX improvements, frontend optimisations, or integration enhancem
 
 A massive thank you to the [Juno](https://juno.build/) project.
 
-The baseline of this entire application was initialised via the Juno CLI and templates. Furthermore, several core service integrations, utility scripts, components, and architectural conventions in the **SoVault App** were directly inspired by or derived from the Juno open-source repositories. We are deeply grateful for their robust tooling and ecosystem!
+The baseline of this entire application was initialised via the Juno CLI and templates. The app has since moved off the Juno SDK — it now talks to its satellite canister directly — but the debt is real. Furthermore, several core service integrations, utility scripts, components, and architectural conventions in the **SoVault App** were directly inspired by or derived from the Juno open-source repositories. We are deeply grateful for their robust tooling and ecosystem!
 
 ---
 

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { signOut } from '@junobuild/core';
 	import Button from '$lib/components/Button.svelte';
+	import { signOut } from '$lib/services/auth.services';
 
 	const doSignOut = (): Promise<void> => signOut();
 </script>

@@ -1,13 +1,12 @@
 <script lang="ts">
-	import { onAuthStateChange } from '@junobuild/core';
-	import { onDestroy, onMount, type Snippet } from 'svelte';
+	import { onMount, type Snippet } from 'svelte';
 	import Button from '$lib/components/Button.svelte';
 	import GitHubButton from '$lib/components/GitHubButton.svelte';
 	import Logout from '$lib/components/Logout.svelte';
 	import SignIn from '$lib/components/SignIn.svelte';
 	import WalletModal from '$lib/components/WalletModal.svelte';
 	import { userSignedIn } from '$lib/derived/user.derived';
-	import { userStore } from '$lib/stores/user.store';
+	import { initAuth } from '$lib/services/auth.services';
 
 	interface Props {
 		children: Snippet;
@@ -17,22 +16,15 @@
 
 	let openWallet = $state(false);
 
-	let unsubscribe: (() => void) | undefined = undefined;
-
-	onMount(() => (unsubscribe = onAuthStateChange((user) => userStore.set(user))));
-
-	// eslint-disable-next-line no-console
-	const automaticSignOut = () => console.log('Automatically signed out because session expired');
-
-	onDestroy(() => unsubscribe?.());
+	onMount(() => {
+		initAuth();
+	});
 
 	// eslint-disable-next-line require-await
 	const openWalletModal = async () => {
 		openWallet = true;
 	};
 </script>
-
-<svelte:window onjunoSignOutAuthTimer={automaticSignOut} />
 
 {#if $userSignedIn}
 	<div class="space-y-4">

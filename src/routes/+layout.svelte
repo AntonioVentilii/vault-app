@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { initSatellite } from '@junobuild/core';
 	import type { Snippet } from 'svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	// eslint-disable-next-line import/no-relative-parent-imports
@@ -10,18 +9,6 @@
 	}
 
 	const { children }: Props = $props();
-
-	const init = async () => {
-		await initSatellite({
-			workers: {
-				auth: true
-			}
-		});
-	};
-
-	$effect(() => {
-		init();
-	});
 </script>
 
 <div class="relative isolate min-h-dvh bg-gray-50 dark:bg-gray-950">

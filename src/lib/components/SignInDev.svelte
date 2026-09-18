@@ -1,13 +1,11 @@
 <script lang="ts">
-	import { signIn } from '@junobuild/core';
 	import Button from '$lib/components/Button.svelte';
 	import IconRobot from '$lib/components/icons/IconRobot.svelte';
+	import { signInDev } from '$lib/services/auth.services';
 
+	// Sign in for local development and E2E only
 	const signInWithDev = async () => {
-		// Sign in for local development and E2E only
-		await signIn({
-			dev: {}
-		});
+		await signInDev();
 	};
 </script>
 
