@@ -11,7 +11,7 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write . && eslint . --fix",
-		"deploy": "npm run build && SATELLITE_ID=z6kq3-iqaaa-aaaal-asxhq-cai node scripts/deploy-hosting.mjs --network ic"
+		"deploy": "npm run build && node scripts/deploy-hosting.mjs --network ic --satellite z6kq3-iqaaa-aaaal-asxhq-cai"
 	},
 	"devDependencies": {
 		"@dfinity/eslint-config-oisy-wallet": "^0.2.3",
