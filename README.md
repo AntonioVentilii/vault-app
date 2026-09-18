@@ -46,20 +46,6 @@ While the fundamental protocol logic (initiation, concurrent chunking, ICP/ckUSD
 
 - Node.js (see `.node-version` file for recommended version)
 - `npm`
-- Juno CLI — for the local emulator only; deploys no longer use it
-  ([Juno CLI Documentation](https://juno.build/docs/reference/cli))
-
-### Start the local emulator
-
-This spins up a local satellite to develop against. It is the only remaining
-Juno dependency and never ships to production:
-
-```bash
-juno emulator start
-```
-
-The satellite IDs used for deploys live in `package.json`'s `deploy` script and
-`.github/workflows/deploy.yml`.
 
 ### Installation
 
@@ -77,6 +63,53 @@ Start the development server:
 npm run dev
 ```
 
+### Running against a local replica
+
+To serve the app the way it is served in production:
+
+```bash
+npx icp network start -d
+npm run deploy:local
+npx icp network stop
+```
+
+The local gateway is on port 5987, which is what the app already expects
+locally. `icp` and `ic-wasm` are devDependencies, so `npm ci` installs them —
+there is no separate toolchain to set up.
+
+## 🚀 Deploy
+
+```bash
+npm run deploy
+```
+
+That runs `icp deploy -e ic frontend`, building the site and uploading `build/`
+to `z6kq3-iqaaa-aaaal-asxhq-cai` — the same canister as before, now running the
+standard asset canister wasm instead of Juno's satellite. The name is mapped to
+that ID in [`.icp/data/mappings/ic.ids.json`](./.icp/data/mappings/ic.ids.json),
+which is committed on purpose: losing it loses the mapping.
+
+Headers, caching and the content security policy come from
+[`static/.ic-assets.json5`](./static/.ic-assets.json5). It must live in
+`static/` so `adapter-static` copies it into `build/` — icp-cli only reads it
+from the directory it uploads.
+
+> **`static/.well-known/ic-domains` keeps `sovault.app` working.** The boundary
+> nodes read that file to validate the custom domain against this canister.
+> Delete it and the domain stops resolving here.
+
+CI deploys on every push to `main` via
+[`deploy.yml`](./.github/workflows/deploy.yml), using a `DEPLOY_PEM` repository
+secret. The principal behind it needs the canister's `Commit` permission:
+
+```bash
+npx icp canister call frontend grant_permission \
+  '(record { to_principal = principal "<principal>"; permission = variant { Commit } })' -e ic
+```
+
+Prefer that over adding a controller: a controller can replace the wasm or
+delete the canister, whereas `Commit` only allows publishing assets.
+
 ## 🤝 Contributing
 
 Since this repository is strictly the frontend component of **SoVault Core**, any backend issues, canister bugs, or core architecture contributions should be directed to the [**SoVault Core** Repository](https://github.com/AntonioVentilii/vault-core).
@@ -87,7 +120,7 @@ However, any UI/UX improvements, frontend optimisations, or integration enhancem
 
 A massive thank you to the [Juno](https://juno.build/) project.
 
-The baseline of this entire application was initialised via the Juno CLI and templates. The app has since moved off the Juno SDK — it now talks to its satellite canister directly — but the debt is real. Furthermore, several core service integrations, utility scripts, components, and architectural conventions in the **SoVault App** were directly inspired by or derived from the Juno open-source repositories. We are deeply grateful for their robust tooling and ecosystem!
+The baseline of this entire application was initialised via the Juno CLI and templates. The app has since moved off Juno entirely — its own auth, and a standard asset canister for hosting — but the debt is real. Furthermore, several core service integrations, utility scripts, components, and architectural conventions in the **SoVault App** were directly inspired by or derived from the Juno open-source repositories. We are deeply grateful for their robust tooling and ecosystem!
 
 ---
 
