@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { isNullish } from '@dfinity/utils';
-	import { getIdentityOnce } from '@junobuild/core';
 	import Button from '$lib/components/Button.svelte';
 	import { userNotSignedIn } from '$lib/derived/user.derived';
 	import { isDev } from '$lib/env/app.env';
 	import { refreshFiles, uploadFile } from '$lib/services/file.services';
+	import { getIdentityOnce } from '$lib/services/identity.services';
 
 	let { open = $bindable(false) } = $props();
 

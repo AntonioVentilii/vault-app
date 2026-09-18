@@ -1,0 +1,74 @@
+canisters:
+  # The app's static frontend.
+  #
+  # It runs in the canister that previously held Juno's satellite —
+  # z6kq3-iqaaa-aaaal-asxhq-cai, recorded in .icp/data/mappings/ic.ids.json —
+  # so sovault.app keeps pointing at it. Switching the wasm is what removes the
+  # last piece of Juno, and it is why `icp` can deploy the assets at all: the
+  # satellite spoke Juno's own upload API, not the standard asset canister one.
+  - name: frontend
+
+    recipe:
+      type: '@dfinity/asset-canister@v2.3.0'
+
+      configuration:
+        # No `build` here on purpose. The recipe would always run the same
+        # command, and the local deploy needs the `skylab` mode so the app
+        # targets the local gateway instead of mainnet. `npm run deploy` and
+        # `npm run deploy:local` each build first, with the right mode.
+        dir: build
+
+  - name: directory
+
+    recipe:
+      type: '@dfinity/rust@v3.4.0'
+
+      configuration:
+        package: directory
+        candid: 'target/vault/directory.did'
+
+      build:
+        steps:
+          - type: script
+            command: scripts/build.vault.directory.sh
+
+          - type: pre-built
+            path: target/vault/directory.wasm
+
+      init_args: target/vault/directory.args.did
+
+  - name: bucket
+
+    recipe:
+      type: '@dfinity/rust@v3.4.0'
+
+      configuration:
+        package: bucket
+        candid: 'target/vault/bucket.did'
+
+      build:
+        steps:
+          - type: script
+            command: scripts/build.vault.bucket.sh
+
+          - type: pre-built
+            path: target/vault/bucket.wasm
+
+      init_args: target/vault/bucket.args.did
+
+networks:
+  - name: local
+    mode: managed
+    gateway:
+      host: 127.0.0.1
+      port: 5987
+
+environments:
+  # `staging` used to be declared as its own network pointing at
+  # https://icp-api.io, which is simply mainnet. icp-cli has a built-in,
+  # protected `ic` network, and a connected network of our own would have to
+  # carry a copy of the mainnet root key. An environment on `ic` expresses the
+  # same thing without duplicating it.
+  - name: staging
+    network: ic
+    canisters: [directory, bucket]

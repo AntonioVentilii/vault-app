@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { isNullish } from '@dfinity/utils';
-	import { getIdentityOnce } from '@junobuild/core';
 	import type { DirectoryDid } from '$declarations';
 	import { deleteFile } from '$lib/api/directory.api';
 	import Button from '$lib/components/Button.svelte';
 	import { userSignedIn } from '$lib/derived/user.derived';
 	import { downloadFile, refreshFiles } from '$lib/services/file.services';
+	import { getIdentityOnce } from '$lib/services/identity.services';
 	import { filesStore, loadingFiles } from '$lib/stores/files.store';
 
 	const handleRefresh = async () => {

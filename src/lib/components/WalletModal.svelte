@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { isNullish, nonNullish } from '@dfinity/utils';
 	import { encodeIcrcAccount } from '@icp-sdk/canisters/ledger/icrc';
-	import { getIdentityOnce } from '@junobuild/core';
 	import { onMount } from 'svelte';
 	import { balance } from '$lib/api/icrc-ledger.api';
 	import Button from '$lib/components/Button.svelte';
 	import { LEDGER_CANISTER_IDS } from '$lib/constants/ledger.constants';
 	import { isDev } from '$lib/env/app.env';
+	import { getIdentityOnce } from '$lib/services/identity.services';
 	import { userStore } from '$lib/stores/user.store';
 
 	let { open = $bindable(false) } = $props();

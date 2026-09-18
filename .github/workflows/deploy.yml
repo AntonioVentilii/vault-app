@@ -1,4 +1,4 @@
-name: Deploy to Juno
+name: Deploy
 
 on:
   workflow_dispatch:
@@ -9,15 +9,43 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     permissions:
-      id-token: write
+      contents: read
     steps:
       - name: Check out the repo
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
+      # Installs icp-cli and ic-wasm too: both are devDependencies, so they are
+      # version-pinned in the lock file and restored from the npm cache rather
+      # than downloaded unpinned on every run. There is no official setup
+      # action for icp-cli.
       - name: Prepare
         uses: ./.github/actions/prepare
 
-      - name: Deploy to Juno
-        uses: junobuild/juno-action@main
-        with:
-          args: hosting deploy
+      # The identity needs the asset canister's Commit permission. That
+      # permission only exists once the canister has been reinstalled as an
+      # asset canister by a controller — see the one-time migration in the
+      # README. This workflow fails until that has happened.
+      - name: Import deploy identity
+        env:
+          DEPLOY_PEM: ${{ secrets.DEPLOY_PEM }}
+        run: |
+          if [[ -z "$DEPLOY_PEM" ]]; then
+            echo "::error::Missing DEPLOY_PEM secret."
+            exit 1
+          fi
+          umask 077
+          printf '%s' "$DEPLOY_PEM" > "$RUNNER_TEMP/deploy.pem"
+          # `keyring` is the default store and is unavailable on a CI runner.
+          npx icp identity import --from-pem "$RUNNER_TEMP/deploy.pem" --storage plaintext deploy
+          npx icp identity default deploy
+
+      # Builds and uploads `build/` to z6kq3-iqaaa-aaaal-asxhq-cai, which is
+      # mapped to `frontend` in .icp/data/mappings/ic.ids.json.
+      - name: Deploy
+        run: npm run deploy
+
+      - name: Remove deploy identity
+        if: always()
+        run: rm -f "$RUNNER_TEMP/deploy.pem"

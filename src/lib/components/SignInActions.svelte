@@ -2,7 +2,6 @@
 	import SignInDev from '$lib/components/SignInDev.svelte';
 	import SignInGoogle from '$lib/components/SignInGoogle.svelte';
 	import SignInII from '$lib/components/SignInII.svelte';
-	import SignInPasskey from '$lib/components/SignInPasskey.svelte';
 	import { isDev, isNotSkylab, isProd } from '$lib/env/app.env';
 </script>
 
@@ -15,7 +14,5 @@
 		<SignInGoogle />
 
 		<SignInII />
-
-		<SignInPasskey />
 	{/if}
 </div>
