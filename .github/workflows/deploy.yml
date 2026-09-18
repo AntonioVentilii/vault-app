@@ -23,8 +23,10 @@ jobs:
       - name: Prepare
         uses: ./.github/actions/prepare
 
-      # The identity needs the asset canister's Commit permission — see the
-      # README. Controller rights are deliberately not required.
+      # The identity needs the asset canister's Commit permission. That
+      # permission only exists once the canister has been reinstalled as an
+      # asset canister by a controller — see the one-time migration in the
+      # README. This workflow fails until that has happened.
       - name: Import deploy identity
         env:
           DEPLOY_PEM: ${{ secrets.DEPLOY_PEM }}

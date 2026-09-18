@@ -6,7 +6,7 @@
 	import SignIn from '$lib/components/SignIn.svelte';
 	import WalletModal from '$lib/components/WalletModal.svelte';
 	import { userSignedIn } from '$lib/derived/user.derived';
-	import { initAuth } from '$lib/services/auth.services';
+	import { initAuth, watchAuth } from '$lib/services/auth.services';
 
 	interface Props {
 		children: Snippet;
@@ -18,6 +18,8 @@
 
 	onMount(() => {
 		initAuth();
+
+		return watchAuth();
 	});
 
 	// eslint-disable-next-line require-await

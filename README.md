@@ -74,8 +74,10 @@ npx icp network stop
 ```
 
 The local gateway is on port 5987, which is what the app already expects
-locally. `icp` and `ic-wasm` are devDependencies, so `npm ci` installs them —
-there is no separate toolchain to set up.
+locally. `deploy:local` builds with `--mode skylab` so the deployed app targets
+that gateway and shows the dev sign-in; a plain production build would point at
+mainnet instead. `icp` and `ic-wasm` are devDependencies, so `npm ci` installs
+them — there is no separate toolchain to set up.
 
 ## 🚀 Deploy
 
@@ -98,9 +100,27 @@ from the directory it uploads.
 > nodes read that file to validate the custom domain against this canister.
 > Delete it and the domain stops resolving here.
 
-CI deploys on every push to `main` via
-[`deploy.yml`](./.github/workflows/deploy.yml), using a `DEPLOY_PEM` repository
-secret. The principal behind it needs the canister's `Commit` permission:
+### One-time migration (not yet done)
+
+The canister still runs Juno's satellite wasm. Until it is replaced, it is not
+an asset canister at all: `grant_permission` does not exist on it, and a
+`Commit`-only identity cannot deploy to it. So the first deployment has to be
+run by hand, by a **controller**:
+
+```bash
+npm run build
+npx icp deploy -e ic frontend --mode reinstall
+```
+
+`--mode reinstall` is required — the asset canister cannot upgrade from the
+satellite's stable memory layout, so this wipes the canister's state. The
+controllers today are the Juno console identities plus Juno's mission control.
+
+> **Check `/.well-known/ic-domains` immediately afterwards.** That file is
+> what keeps `sovault.app` registered against this canister.
+
+Only once that has happened does the canister expose `grant_permission`, and
+only then can CI take over:
 
 ```bash
 npx icp canister call frontend grant_permission \
@@ -109,6 +129,12 @@ npx icp canister call frontend grant_permission \
 
 Prefer that over adding a controller: a controller can replace the wasm or
 delete the canister, whereas `Commit` only allows publishing assets.
+
+### Ongoing deploys
+
+CI deploys via [`deploy.yml`](./.github/workflows/deploy.yml), using a
+`DEPLOY_PEM` repository secret whose principal holds that `Commit` permission.
+**The workflow fails until the one-time step above is done.**
 
 ## 🤝 Contributing
 
