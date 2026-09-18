@@ -50,7 +50,19 @@ export const loadDevIdentity = (): Identity | undefined => {
 	}
 };
 
-export const createDevIdentity = (): Identity => {
+/**
+ * Returns `undefined` outside dev.
+ *
+ * The guard belongs here rather than only on the button: `signInDev` ships in
+ * the production bundle even though nothing renders its button, so without
+ * this a call from a production build would mint and persist a development key
+ * and mark the user signed in.
+ */
+export const createDevIdentity = (): Identity | undefined => {
+	if (!isDev()) {
+		return undefined;
+	}
+
 	const existing = loadDevIdentity();
 
 	if (nonNullish(existing)) {

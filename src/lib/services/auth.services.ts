@@ -38,6 +38,47 @@ const toUser = (identity: Identity): User => {
 	return { key, owner: key };
 };
 
+/**
+ * Signs the user out when the delegation expires.
+ *
+ * `initAuth` runs once, so without this the store would stay populated after
+ * the delegation's four-hour lifetime: the UI would keep presenting a signed-in
+ * user while every canister call failed with an expired identity. The Juno SDK
+ * ran an auth worker that fired `junoSignOutAuthTimer` for exactly this; the
+ * timer below is what replaces it.
+ */
+let signOutTimer: ReturnType<typeof setTimeout> | undefined;
+
+const clearScheduledSignOut = () => {
+	if (nonNullish(signOutTimer)) {
+		clearTimeout(signOutTimer);
+		signOutTimer = undefined;
+	}
+};
+
+const scheduleSignOut = async () => {
+	clearScheduledSignOut();
+
+	const expiration = await AuthClientProvider.getInstance().delegationExpiration();
+
+	if (isNullish(expiration)) {
+		return;
+	}
+
+	const remaining = expiration - Date.now();
+
+	if (remaining <= 0) {
+		await signOut();
+		return;
+	}
+
+	signOutTimer = setTimeout(() => {
+		console.warn('Signed out automatically because the session expired');
+
+		signOut();
+	}, remaining);
+};
+
 export const signIn = async ({
 	openIdProvider
 }: { openIdProvider?: OpenIdProvider } = {}): Promise<void> => {
@@ -53,15 +94,27 @@ export const signIn = async ({
 	const identity = await authClient.signIn({ maxTimeToLive: II_MAX_TIME_TO_LIVE_NS });
 
 	userStore.set(toUser(identity));
+
+	await scheduleSignOut();
 };
 
 /** Local development and E2E only — see `dev-identity.services`. */
 // eslint-disable-next-line require-await
 export const signInDev = async (): Promise<void> => {
-	userStore.set(toUser(createDevIdentity()));
+	const identity = createDevIdentity();
+
+	if (isNullish(identity)) {
+		// `createDevIdentity` refuses outside dev; reaching here in a production
+		// build means something rendered the dev button that should not have.
+		console.error('Dev sign-in is not available in this build');
+		return;
+	}
+
+	userStore.set(toUser(identity));
 };
 
 export const signOut = async (): Promise<void> => {
+	clearScheduledSignOut();
 	clearDevIdentity();
 
 	const provider = AuthClientProvider.getInstance();
@@ -98,6 +151,10 @@ export const initAuth = async (): Promise<void> => {
 		const identity = await AuthClientProvider.getInstance().loadIdentity();
 
 		userStore.set(isNullish(identity) ? null : toUser(identity));
+
+		if (nonNullish(identity)) {
+			await scheduleSignOut();
+		}
 	} catch (err) {
 		console.error('Failed to restore the session:', err);
 
